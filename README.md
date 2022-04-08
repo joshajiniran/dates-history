@@ -1,2 +1,2 @@
 # dates-api
-An API that gives historical events of days.
+An API around historical events of days.
