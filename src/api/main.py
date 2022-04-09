@@ -5,5 +5,5 @@ app = FastAPI()
 
 # sanity check route
 @app.get("/ping")
-def pong():
+async def pong():
     return {"ping": "pong!"}
