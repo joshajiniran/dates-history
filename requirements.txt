@@ -1,0 +1,5 @@
+fastapi==0.75.1
+psycopg2-binary==2.9.3
+typing_extensions==4.1.1
+uvicorn[standard]==0.17.6
+pytest==7.1.1
