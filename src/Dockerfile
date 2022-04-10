@@ -12,6 +12,7 @@ ENV PYTHONUNBUFFERED 1
 RUN set -eux \
     && apk add --no-cache --virtual .build-deps build-base \
         libressl-dev libffi-dev gcc musl-dev python3-dev \
+        postgresql-dev bash \
     && pip install --upgrade pip setuptools wheel \
     && rm -rf /root/.cache/pip
 
