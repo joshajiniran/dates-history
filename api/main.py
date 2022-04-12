@@ -5,8 +5,7 @@ from fastapi import Depends, FastAPI, Header, HTTPException
 from sqlalchemy.orm import Session
 
 from api import crud, schemas
-from api.database import SessionLocal, engine
-from api.models import DateFact
+from api.database import SessionLocal
 
 app = FastAPI()
 
