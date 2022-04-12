@@ -23,7 +23,8 @@ RUN pip install -r /usr/src/app/requirements.txt
 
 COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
 
+RUN chmod +x /usr/src/app/entrypoint.sh
 # copy project
 COPY . /usr/src/app/
 
-RUN chmod +x entrypoint.sh
+CMD ["./entrypoint.sh"]
