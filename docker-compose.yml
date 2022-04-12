@@ -2,16 +2,16 @@ version: '3.8'
 
 services:
   api:
-    build: ./src
+    build: .
     container_name: api
-    command: |
-      bash -c 'while !</dev/tcp/db/5432; do sleep 1;done; uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000'
+    entrypoint: ["./entrypoint.sh"]
     volumes:
-      - ./src/:/usr/src/app/
+      - ./:/usr/src/app/
     ports:
       - 8000:8000
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db/dates
+      - DATABASE_URL=${DATABASE_URL}
+      - PORT=${PORT}
     depends_on:
       - db
 
@@ -19,13 +19,22 @@ services:
     container_name: db
     image: postgres:13-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data/
     expose:
       - 5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=dates
-  
+      - POSTGRES_DB=dates_facts_db
+
+  adminer:
+    container_name: adminer
+    image: adminer:4.8.1
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
