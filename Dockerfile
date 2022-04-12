@@ -11,13 +11,8 @@ ENV PYTHONUNBUFFERED 1
 # install dependencies
 RUN set -eux \
     && apk add --no-cache --virtual .build-deps build-base \
-<<<<<<< HEAD:src/Dockerfile
-        libressl-dev libffi-dev gcc musl-dev python3-dev \
-        postgresql-dev bash \
-=======
     libressl-dev libffi-dev gcc musl-dev python3-dev \
     postgresql-dev bash \
->>>>>>> 14af9c8bc2ca074fa10474a5a6d92d05a717dae0:Dockerfile
     && pip install --upgrade pip setuptools wheel \
     && rm -rf /root/.cache/pip
 
