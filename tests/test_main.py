@@ -3,11 +3,13 @@ from urllib import response
 import pytest
 from api.main import app
 from api.models import DateFact
-from starlette.testclient import TestClient
+from fastapi.testclient import TestClient
 
-from tests.conftest import test_app
 
-client = TestClient(app)
+@pytest.fixture(scope="module")
+def test_app():
+    client = TestClient(app)
+    yield client
 
 
 def test_ping(test_app):
@@ -87,7 +89,7 @@ def test_delete_date_fact_by_id_no_api_key(test_app):
     assert response.json() == {"detail": "No API Key specified in header"}
     
 
-def test_delete_date_fact_by_id_invalid_api_key(test_app):
+def test_delete_date_fact_by_id(test_app):
     response = test_app.get(
         "/dates/1",
         headers={
