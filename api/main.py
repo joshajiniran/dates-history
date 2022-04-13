@@ -55,7 +55,7 @@ def get_all_dates_facts(db: Session = Depends(get_db)):
 def get_single_date_fact(id: int, db: Session = Depends(get_db)):
     date_fact = crud.get_date_fact_by_id(db, id=id)
     if date_fact is None:
-        raise HTTPException(status_code=404, detail="Date Fact not found")
+        raise HTTPException(status_code=404, detail="Date fact not found")
     return date_fact
 
 
@@ -68,7 +68,7 @@ def delete_single_date_fact(id: int, X_API_KEY: Optional[str] = Header(None), db
     
     date_fact_rows = crud.delete_date_fact(db, id)
     if date_fact_rows == 0:
-        raise HTTPException(status_code=404, detail="Date Fact not found")
+        raise HTTPException(status_code=404, detail="Date fact not found")
     db.commit()
     return {"status": True, "message": "Date fact has been successfully deleted"}
 

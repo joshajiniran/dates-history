@@ -80,6 +80,16 @@ def test_delete_date_fact_by_id(test_app):
     assert response.status_code == 200
     assert response.json() == {"status": True, "message": "Date fact has been successfully deleted"}
     
+def test_delete_non_existing_date_fact(test_app):
+    response = test_app.get(
+        "/dates/9999",
+        headers={
+            "X-API-KEY": "SECRET_API_KEY"
+        }
+    )
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Date fact not found"}
+    
 
 def test_delete_date_fact_by_id_no_api_key(test_app):
     response = test_app.get(
@@ -89,7 +99,7 @@ def test_delete_date_fact_by_id_no_api_key(test_app):
     assert response.json() == {"detail": "No API Key specified in header"}
     
 
-def test_delete_date_fact_by_id(test_app):
+def test_delete_date_fact_by_id_invalid_api_key(test_app):
     response = test_app.get(
         "/dates/1",
         headers={
