@@ -3,3 +3,5 @@ build:
     web: Dockerfile
 run:
   web: uvicorn api.main:app --reload --host 0.0.0.0 --port $PORT
+release:
+  web: alembic upgrade head
