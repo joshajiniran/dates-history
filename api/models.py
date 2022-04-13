@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, UniqueConstraint
-from api.database import Base
+
+from api.database import Base, SessionLocal
 
 
 class DateFact(Base):
@@ -15,5 +16,10 @@ class DateFact(Base):
     def __repr__(self) -> str:
         return f'<DateFact {self.day}/{self.month}>'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.fact
+    
+    def save(self) -> None:
+        db = SessionLocal
+        db.add(self)
+        db.commit()
