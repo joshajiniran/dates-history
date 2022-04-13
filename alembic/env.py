@@ -1,5 +1,6 @@
 from logging.config import fileConfig
 
+from api import config as config_env
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
@@ -8,12 +9,13 @@ from alembic import context
 # access to the values within the .ini file in use.
 config = context.config
 
+config.set_main_option("sqlalchemy.url", config_env.DATABASE_URL)
+
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
-
-from api import config as config_env
+    
 # add your model's MetaData object here
 from api.database import Base
 from api.models import DateFact

@@ -10,7 +10,7 @@ services:
     ports:
       - 8000:8000
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db/dates_facts_db
+      - DATABASE_URL=${DATABASE_URL}
       - PORT=${PORT}
     depends_on:
       - db
