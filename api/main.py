@@ -2,6 +2,7 @@ from calendar import month_name
 from typing import Optional
 
 from fastapi import Depends, FastAPI, Header, HTTPException
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from api import crud, schemas
@@ -9,16 +10,20 @@ from api.database import SessionLocal
 
 description = """
 # An API that displays fun facts provided day and month
-REDOC_URL can be found at [url]/documentation
-
-## Sub heading
-* Some bullets
-* Another bullet
-
-## License
+### REDOC_URL can be found at /documentation
 """
 
-app = FastAPI(title="Dates Fun Facts API", description=description, docs_url="/", redoc_url="/documentation")
+
+class Message(BaseModel):
+    message: str
+
+
+app = FastAPI(
+    title="Dates Fun Facts API",
+    description=description,
+    docs_url="/",
+    redoc_url="/documentation",
+)
 
 
 def get_db():
@@ -51,7 +56,18 @@ def get_all_dates_facts(db: Session = Depends(get_db)):
     return dates_facts
 
 
-@app.get("/dates/{id}", response_model=schemas.DateFact)
+@app.get(
+    "/dates/{id}",
+    response_model=schemas.DateFact,
+    responses={
+        404: {
+            "model": Message,
+            "content": {
+                "application/json": {"example": {"detail": "Date fact not found"}}
+            },
+        },
+    },
+)
 def get_single_date_fact(id: int, db: Session = Depends(get_db)):
     date_fact = crud.get_date_fact_by_id(db, id=id)
     if date_fact is None:
@@ -59,13 +75,25 @@ def get_single_date_fact(id: int, db: Session = Depends(get_db)):
     return date_fact
 
 
-@app.delete("/dates/{id}")
-def delete_single_date_fact(id: int, X_API_KEY: Optional[str] = Header(None), db: Session = Depends(get_db)):
+@app.delete(
+    "/dates/{id}",
+    responses={
+        404: {
+            "model": Message,
+            "content": {
+                "application/json": {"example": {"detail": "Date fact not found"}}
+            },
+        }
+    },
+)
+def delete_single_date_fact(
+    id: int, X_API_KEY: Optional[str] = Header(None), db: Session = Depends(get_db)
+):
     if X_API_KEY is None:
         raise HTTPException(status_code=400, detail="No API Key specified in header")
     if X_API_KEY != "SECRET_API_KEY":
         raise HTTPException(status_code=400, detail="Invalid API Key in header")
-    
+
     date_fact_rows = crud.delete_date_fact(db, id)
     if date_fact_rows == 0:
         raise HTTPException(status_code=404, detail="Date fact not found")

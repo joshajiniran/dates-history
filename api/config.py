@@ -1,10 +1,12 @@
 import os
+from typing import Optional
 
-APP_ENV = os.getenv("APP_ENV", "development")
-DB_USER = os.getenv("DB_USER", "postgres")
-DB_PSWD = os.getenv("DB_PSWD", "postgres")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_NAME = os.getenv("DB_NAME", "dates_facts_db")
-DATABASE_URL = os.getenv(
-    "DATABASE_URL", "postgresql://postgres:postgres@db/dates_facts_db"
-).replace("postgres://", "postgresql://", 1)
+from pydantic import BaseSettings
+
+
+class Settings(BaseSettings):
+    database_url: str
+    test_database_url: Optional[
+        str
+    ] = "postgresql://postgres:postgres@db/dates_facts_test_db"
+    port: str = 8000

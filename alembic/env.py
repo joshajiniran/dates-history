@@ -1,6 +1,6 @@
 from logging.config import fileConfig
 
-from api import config as config_env
+from api.config import Settings
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
@@ -9,13 +9,17 @@ from alembic import context
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("sqlalchemy.url", config_env.DATABASE_URL)
+settings = Settings()
+
+config.set_main_option(
+    "sqlalchemy.url", settings.database_url.replace("postgres://", "postgresql://", 1)
+)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
-    
+
 # add your model's MetaData object here
 from api.database import Base
 from api.models import DateFact
@@ -29,6 +33,7 @@ target_metadata = Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
 
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
@@ -68,9 +73,7 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
