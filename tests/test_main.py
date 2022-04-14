@@ -60,7 +60,7 @@ def test_get_dates_facts_rank_by_days_checked(test_app):
     
 
 def test_delete_date_fact_by_id(test_app):
-    response = test_app.get(
+    response = test_app.delete(
         "/dates/1",
         headers={
             "X-API-KEY": "SECRET_API_KEY"
@@ -70,7 +70,7 @@ def test_delete_date_fact_by_id(test_app):
     assert response.json() == {"status": True, "message": "Date fact has been successfully deleted"}
     
 def test_delete_non_existing_date_fact(test_app):
-    response = test_app.get(
+    response = test_app.delete(
         "/dates/9999",
         headers={
             "X-API-KEY": "SECRET_API_KEY"
@@ -81,7 +81,7 @@ def test_delete_non_existing_date_fact(test_app):
     
 
 def test_delete_date_fact_by_id_no_api_key(test_app):
-    response = test_app.get(
+    response = test_app.delete(
         "/dates/1"
     )
     assert response.status_code == 400
@@ -89,7 +89,7 @@ def test_delete_date_fact_by_id_no_api_key(test_app):
     
 
 def test_delete_date_fact_by_id_invalid_api_key(test_app):
-    response = test_app.get(
+    response = test_app.delete(
         "/dates/1",
         headers={
             "X-API-KEY": "SECRET_KEY"

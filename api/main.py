@@ -9,13 +9,7 @@ from api.database import SessionLocal
 
 description = """
 # An API that displays fun facts provided day and month
-REDOC_URL can be found at [url]/documentation
-
-## Sub heading
-* Some bullets
-* Another bullet
-
-## License
+### REDOC_URL can be found at /documentation
 """
 
 app = FastAPI(title="Dates Fun Facts API", description=description, docs_url="/", redoc_url="/documentation")

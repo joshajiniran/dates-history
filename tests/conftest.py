@@ -42,7 +42,7 @@ def test_app():
     finally:
         pass
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="function")
 def create_test_date_fact(test_app):
     db = next(override_get_db())
     date_fact = DateFact(id=1, day=1, month="January", fact="On 1st January 1890, King Edwards became a Junior Developer")
