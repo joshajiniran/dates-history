@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, UniqueConstraint
 
-from api.database import Base, SessionLocal
-
+from api.database import Base
 
 class DateFact(Base):
     __tablename__ = "date_facts"
@@ -19,7 +18,4 @@ class DateFact(Base):
     def __str__(self) -> str:
         return self.fact
     
-    def save(self) -> None:
-        db = SessionLocal
-        db.add(self)
-        db.commit()
+    
