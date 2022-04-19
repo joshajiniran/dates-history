@@ -1,4 +1,5 @@
 from calendar import month_name
+from dataclasses import dataclass
 from typing import Optional
 
 from fastapi import Depends, FastAPI, Header, HTTPException
@@ -16,7 +17,15 @@ description = """
 
 class Message(BaseModel):
     message: str
+    
 
+class MonthDayException(HTTPException):
+    def __init__(self, day: int, month: int, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.day = day
+        self.month = month
+        self.detail = f"{day} does not exist in {month_name[month]}"
+        
 
 app = FastAPI(
     title="Dates Fun Facts API",
@@ -32,6 +41,16 @@ def get_db():
         yield db
     finally:
         db.close()
+        
+
+def sanitize_excessive_month_date(day: int, month: int) -> Optional[Exception]:
+    if month in (4, 6, 9, 11) and day > 30:
+        raise MonthDayException(day=day, month=month, status_code=400)
+    
+    if month == 2 and day > 29:
+        raise MonthDayException(day=day, month=month, status_code=400)
+    
+    return
 
 
 # sanity check route
@@ -42,6 +61,8 @@ async def pong():
 
 @app.post("/dates", response_model=schemas.DateFact, status_code=201)
 def create_date_fact(payload: schemas.DateFactCreate, db: Session = Depends(get_db)):
+    # check for date correctness
+    sanitize_excessive_month_date(payload.day, payload.month)
     # checks for date fact in the db
     date_fact = crud.get_date_fact_by_date(db, payload.day, month_name[payload.month])
     # if it exists, return response
