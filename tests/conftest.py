@@ -26,19 +26,16 @@ Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 
-def override_get_db():
-    try:
-        db = TestingSessionLocal()
-        yield db
-    finally:
-        db.close()
-
-
-app.dependency_overrides[get_db] = override_get_db
-
-
 @pytest.fixture(scope="module")
-def test_app():
+def client():
+    def override_get_db():
+        try:
+            db = TestingSessionLocal()
+            yield db
+        finally:
+            db.close()
+
+        app.dependency_overrides[get_db] = override_get_db
     try:
         client = TestClient(app)
         yield client
@@ -46,19 +43,13 @@ def test_app():
         pass
 
 
-@pytest.fixture(scope="function")
-def create_test_date_fact(test_app):
-    db = next(override_get_db())
-    date_fact = DateFact(
-        id=1,
-        day=1,
-        month="January",
-        fact="On 1st January 1890, King Edwards became a Junior Developer",
-    )
-    db.add(date_fact)
-    db.commit()
+@pytest.fixture
+def create_test_date_fact(client):
+    
+    date_fact = client.post("/dates", json={"day": 3, "month": 12})
 
-    yield
+    yield date_fact.json()
+    
+    id = date_fact.json()["id"]
 
-    db.query(DateFact).filter(DateFact.id == 1).delete()
-    db.commit()
+    client.delete(f"/dates/{id}", headers={"X_API_KEY": "SECRET_API_KEY"})
